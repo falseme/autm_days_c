@@ -7,7 +7,6 @@
 static int verbose_flag;
 static int help_flag;
 static int day_flag;
-int day_flags[8];
 
 static struct option long_options[] = {
     /* FLAGS */
@@ -22,7 +21,7 @@ static struct option long_options[] = {
     {"help", no_argument, &help_flag, 9},
     {"verbose", no_argument, &verbose_flag, 10},
 
-    /* CMD OPTIONS */
+    /* OPTIONS */
     {"add", required_argument, 0, 'a'},
     {"remove", required_argument, 0, 'r'},
     {"end", required_argument, 0, 'e'},

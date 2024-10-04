@@ -3,15 +3,20 @@
 #include <string.h>
 
 #include "dayt.c"
-#include "options.c"
+#include "flags.c"
+
+static char **days = NULL;
+static size_t day_count = 0;
+
+void push_day(const char* day_name);
 
 int main(int argc, char **argv)
 {
     int c;
 
-    char* add_aux = NULL;
-    char* remove_aux = NULL;
-    char* end_aux = NULL;
+    char *add_aux = NULL;
+    char *remove_aux = NULL;
+    char *end_aux = NULL;
 
     while (1)
     {
@@ -43,37 +48,45 @@ int main(int argc, char **argv)
         /* FLAGS */
         case 0:
             if (option_index < 8)
-                day_flags[option_index] = 1;
-            // day_flags[long_options[option_index].val] = 1;
+                push_day(long_options[option_index].name);
             break;
         default:
+            printf("unknown: [%c]", c);
             abort();
         }
     }
 
     if (day_flag)
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < day_count; i++)
         {
-            if (day_flags[i])
-            {
-                if(add_aux)
-                    printf("day `%s` | add `%s`\n", days[i].name, add_aux);
-                if(remove_aux)
-                    printf("day `%s` | remove `%s`\n", days[i].name, remove_aux);
-                if(end_aux)
-                    printf("day `%s` | end `%s`\n", days[i].name, end_aux);
-            }
+            printf("\n");
+            if (add_aux)
+                add_task(days[i], add_aux, verbose_flag);
+            if (remove_aux)
+                printf("DAY `%s` | REMOVE `%s`\n", days[i], remove_aux);
+            if (end_aux)
+                printf("DAY `%s` | END `%s`\n", days[i], end_aux);
         }
-
-    if (verbose_flag)
-    {
-        printf("verbose\n");
-    }
 
     if (help_flag)
     {
         printf("show help\n");
     }
 
+    free(add_aux);
+    free(remove_aux);
+    free(end_aux);
+    free(days);
+
     exit(0);
+}
+
+void push_day(const char *day_name)
+{
+    if (!days)
+        days = (char **)malloc(sizeof(day_name));
+    else
+        days = (char **)realloc(days, sizeof(days) + sizeof(day_name));
+    days[day_count] = malloc(sizeof(day_name));
+    strcpy(days[day_count++], day_name);
 }

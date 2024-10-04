@@ -1,1 +1,6 @@
+# Day Files
+*.autm
+
+# Output Files
+*.o
 *.exe
