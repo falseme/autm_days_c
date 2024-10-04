@@ -241,20 +241,21 @@ void remove_task(char *name, char *task_name, int verbose)
 }
 
 /**
- * Loads a day and mark the given task (if exists) as ended
+ * Ends or Undo a task from the task list.
  * 
  * @param name The day name
  * @param task_name The daily task name
+ * @param eu End [1] or Undo [0]
  * @param verbose Show the current day data if `true`
  */
-void end_task(char* name, char* task_name, int verbose)
+void set_task_ended(char *name, char *task_name, int eu, int verbose)
 {
-    Day* day = load_day(name);
-    for(size_t i=0; i<day->task_size; i++)
+    Day *day = load_day(name);
+    for (size_t i = 0; i < day->task_size; i++)
     {
-        if(strcmp(task_name, day->task_list[i]->name) == 0)
+        if (strcmp(task_name, day->task_list[i]->name) == 0)
         {
-            day->task_list[i]->ended = 1;
+            day->task_list[i]->ended = eu;
             prettyprint(day);
             save_day(day);
             free(day);
@@ -263,4 +264,3 @@ void end_task(char* name, char* task_name, int verbose)
     }
     printf("\n`%s` task \"%s\" not found\n", name, task_name);
 }
-

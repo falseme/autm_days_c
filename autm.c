@@ -13,6 +13,7 @@ int main(int argc, char **argv)
     char *add_aux = NULL;
     char *remove_aux = NULL;
     char *end_aux = NULL;
+    char *undo_aux = NULL;
 
     while (1)
     {
@@ -40,6 +41,10 @@ int main(int argc, char **argv)
             end_aux = malloc(sizeof(optarg));
             strcpy(end_aux, optarg);
             break;
+        case 'u':
+            undo_aux = malloc(sizeof(optarg));
+            strcpy(undo_aux, optarg);
+            break;
 
         /* FLAGS */
         case 0:
@@ -60,7 +65,9 @@ int main(int argc, char **argv)
             if (remove_aux)
                 remove_task(days[i], remove_aux, verbose_flag);
             if (end_aux)
-                end_task(days[i], end_aux, verbose_flag);
+                set_task_ended(days[i], end_aux, 1, verbose_flag);
+            if(undo_aux)
+                set_task_ended(days[i], undo_aux, 0, verbose_flag);
         }
 
     if (help_flag)

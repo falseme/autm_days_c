@@ -25,6 +25,7 @@ static struct option long_options[] = {
     {"add", required_argument, 0, 'a'},
     {"remove", required_argument, 0, 'r'},
     {"end", required_argument, 0, 'e'},
+    {"undo", required_argument, 0, 'u'},
 
     /**/
     {0, 0, 0, 0}
@@ -32,7 +33,7 @@ static struct option long_options[] = {
 
 int get_long_opt(int argc, char* const* argv, int *option_index)
 {
-    return getopt_long(argc, argv, "a:e:r:", long_options, option_index);
+    return getopt_long(argc, argv, "a:e:r:u:", long_options, option_index);
 }
 
 const char* get_day_name(int index)
