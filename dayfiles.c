@@ -1,6 +1,10 @@
 /*
- * DAYS & FILES
+ * DAYS, TASKS & FILES
  */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * Daily Task data

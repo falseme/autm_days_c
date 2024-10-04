@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "dayt.c"
+#include "dayfiles.c"
 #include "flags.c"
 
 static char **days = NULL;
