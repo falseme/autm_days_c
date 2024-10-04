@@ -61,13 +61,13 @@ int main(int argc, char **argv)
         for (int i = 0; i < day_count; i++)
         {
             if (add_aux)
-                add_task(days[i], add_aux, verbose_flag);
+                add_task(days[i], add_aux, silent_flag);
             if (remove_aux)
-                remove_task(days[i], remove_aux, verbose_flag);
+                remove_task(days[i], remove_aux, silent_flag);
             if (end_aux)
-                set_task_ended(days[i], end_aux, 1, verbose_flag);
+                set_task_ended(days[i], end_aux, 1, silent_flag);
             if(undo_aux)
-                set_task_ended(days[i], undo_aux, 0, verbose_flag);
+                set_task_ended(days[i], undo_aux, 0, silent_flag);
         }
 
     if (help_flag)
