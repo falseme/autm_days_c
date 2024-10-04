@@ -1,5 +1,6 @@
 # Day Files
 *.autm
+*.autmd
 
 # Output Files
 *.o

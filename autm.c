@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     {
 
         int option_index = 0;
-        c = getopt_long(argc, argv, "a:r:e:", long_options, &option_index);
+        c = get_long_opt(argc, argv, &option_index);
 
         if (c == -1)
             break;
@@ -48,10 +48,10 @@ int main(int argc, char **argv)
         /* FLAGS */
         case 0:
             if (option_index < 8)
-                push_day(long_options[option_index].name);
+                push_day(get_day_name(option_index));
             break;
         default:
-            printf("unknown: [%c]", c);
+            printf("unknown option: [%c]", c);
             abort();
         }
     }

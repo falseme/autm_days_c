@@ -29,3 +29,14 @@ static struct option long_options[] = {
     /**/
     {0, 0, 0, 0}
 };
+
+int get_long_opt(int argc, char* const* argv, int *option_index)
+{
+    return getopt_long(argc, argv, "a:e:r:", long_options, option_index);
+}
+
+char* get_day_name(int index)
+{
+    return long_options[index].name;
+}
+
