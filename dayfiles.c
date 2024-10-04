@@ -32,7 +32,7 @@ void prettyprint(Day *day)
 {
     printf("\n%s:\n", day->name);
     for (size_t i = 0; i < day->task_size; i++)
-        printf("\n[Task] %3s [%c]", day->task_list[i]->name, day->task_list[i]->ended ? 'X' : '_');
+        printf("\n[Task] %s [%c]", day->task_list[i]->name, day->task_list[i]->ended ? 'X' : '_');
     printf("\n");
 }
 
@@ -169,7 +169,7 @@ void add_task(char *name, char *task_name, int verbose)
         day->task_list = (Task **)malloc(sizeof(Task));
     else
     {
-        for(size_t i=0; i<day->task_size; i++)
+        for(size_t i=0; i<day->task_size-1; i++)
         {
             if(strcmp(day->task_list[i]->name, task_name) == 0)
             {
@@ -189,6 +189,53 @@ void add_task(char *name, char *task_name, int verbose)
     if(verbose)
         prettyprint(day);
 
+    save_day(day);
+    free(day);
+}
+
+/**
+ * Removes a task from the task list
+ * 
+ * @param name The day name
+ * @param task_name The daily task name
+ * @param verbose Show the current day data if `true`
+ */
+void remove_task(char *name, char *task_name, int verbose)
+{
+    Day *day = load_day(name);
+    size_t index;
+    for (index = 0; index < day->task_size; index++)
+        if (strcmp(task_name, day->task_list[index]->name) == 0)
+            break;
+    if (index >= day->task_size)
+    {
+        printf("`%s` task \"%s\" not found", name, task_name);
+        free(day);
+        return;
+    }
+    // IT'S THE LAST ONE OF THE LIST
+    if (index == day->task_size - 1)
+    {
+        day->task_size--;
+        free(day->task_list[index]);
+        day->task_list = (Task **)realloc(day->task_list, sizeof(Task) * day->task_size);
+        if (verbose)
+            prettyprint(day);
+        save_day(day);
+        free(day);
+        return;
+    }
+    // IT'S IN THE MIDDLE OF THE LIST
+    for (size_t i = index + 1; i < day->task_size; i++)
+    {
+        day->task_list[i - 1]->name = day->task_list[i]->name;
+        day->task_list[i - 1]->ended = day->task_list[i]->ended;
+    }
+    day->task_size--;
+    free(day->task_list[day->task_size]);
+    day->task_list = (Task **)realloc(day->task_list, sizeof(Task) * day->task_size);
+    if (verbose)
+        prettyprint(day);
     save_day(day);
     free(day);
 }
@@ -216,3 +263,4 @@ void end_task(char* name, char* task_name, int verbose)
     }
     printf("\n`%s` task \"%s\" not found\n", name, task_name);
 }
+

@@ -58,7 +58,7 @@ int main(int argc, char **argv)
             if (add_aux)
                 add_task(days[i], add_aux, verbose_flag);
             if (remove_aux)
-                printf("DAY `%s` | REMOVE `%s`\n", days[i], remove_aux);
+                remove_task(days[i], remove_aux, verbose_flag);
             if (end_aux)
                 end_task(days[i], end_aux, verbose_flag);
         }
