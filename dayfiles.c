@@ -34,22 +34,6 @@ typedef struct day_t
 } Day;
 
 /**
- * Prints the given day in a readable format
- */
-void prettyprint(Day *day)
-{
-    printf("\n" COLOR_MAGENTA "[%s]" COLOR_RESET " Task List:\n", day->name);
-    for (size_t i = 0; i < day->task_size; i++)
-    {
-        if (day->task_list[i]->ended)
-            printf("\n " COLOR_GREEN "[%c]" COLOR_RESET " %s", 'X', day->task_list[i]->name);
-        else
-            printf("\n " COLOR_RED "[%c]" COLOR_RESET " %s", '_', day->task_list[i]->name);
-    }
-    printf("\n");
-}
-
-/**
  * Serialize the Day data into the given file. (Does not close the file)
  *
  * @param fd The file where the day data will be serialized
@@ -186,7 +170,7 @@ void add_task(char *name, char *task_name)
         {
             if (strcmp(day->task_list[i]->name, task_name) == 0)
             {
-                printf("\n`%s` task \"%s\" already exists\n", day->name, task_name);
+                printf(COLOR_MAGENTA "\n[%s]" COLOR_RED " task \"%s\" already exists" COLOR_RESET, day->name, task_name);
                 free(day);
                 return;
             }
@@ -218,21 +202,10 @@ void remove_task(char *name, char *task_name)
             break;
     if (index >= day->task_size)
     {
-        printf("`%s` task \"%s\" not found", name, task_name);
+        printf(COLOR_MAGENTA "\n[%s]" COLOR_RED " task \"%s\" not found" COLOR_RESET, name, task_name);
         free(day);
         return;
     }
-    // IT'S THE LAST ONE OF THE LIST
-    if (index == day->task_size - 1)
-    {
-        day->task_size--;
-        free(day->task_list[index]);
-        day->task_list = (Task **)realloc(day->task_list, sizeof(Task) * day->task_size);
-        save_day(day);
-        free(day);
-        return;
-    }
-    // IT'S IN THE MIDDLE OF THE LIST
     for (size_t i = index + 1; i < day->task_size; i++)
     {
         day->task_list[i - 1]->name = day->task_list[i]->name;
@@ -265,9 +238,24 @@ void set_task_ended(char *name, char *task_name, int eu)
             return;
         }
     }
-    printf("\n`%s` task \"%s\" not found\n", name, task_name);
+    printf(COLOR_MAGENTA "\n[%s]" COLOR_RED " task \"%s\" not found" COLOR_RESET, name, task_name);
 }
 
+/**
+ * Prints the given day in a readable format
+ */
+void prettyprint(Day *day)
+{
+    printf("\n" COLOR_MAGENTA "[%s]" COLOR_RESET " Task List:\n", day->name);
+    for (size_t i = 0; i < day->task_size; i++)
+    {
+        if (day->task_list[i]->ended)
+            printf("\n " COLOR_GREEN "[%c]" COLOR_RESET " %s", 'X', day->task_list[i]->name);
+        else
+            printf("\n " COLOR_RED "[%c]" COLOR_RESET " %s", '_', day->task_list[i]->name);
+    }
+    printf("\n");
+}
 
 void verbose_day(char* day_name)
 {
