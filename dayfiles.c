@@ -6,6 +6,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define COLOR_RED     "\x1b[31m"
+#define COLOR_GREEN   "\x1b[32m"
+#define COLOR_YELLOW  "\x1b[33m"
+#define COLOR_BLUE    "\x1b[34m"
+#define COLOR_MAGENTA "\x1b[35m"
+#define COLOR_CYAN    "\x1b[36m"
+#define COLOR_RESET   "\x1b[0m"
+
 /**
  * Daily Task data
  */
@@ -30,9 +38,14 @@ typedef struct day_t
  */
 void prettyprint(Day *day)
 {
-    printf("\n%s:\n", day->name);
+    printf("\n" COLOR_MAGENTA "[%s]" COLOR_RESET " Task List:\n", day->name);
     for (size_t i = 0; i < day->task_size; i++)
-        printf("\n[Task] %s [%c]", day->task_list[i]->name, day->task_list[i]->ended ? 'X' : '_');
+    {
+        if (day->task_list[i]->ended)
+            printf("\n " COLOR_GREEN "[%c]" COLOR_RESET " %s", 'X', day->task_list[i]->name);
+        else
+            printf("\n " COLOR_RED "[%c]" COLOR_RESET " %s", '_', day->task_list[i]->name);
+    }
     printf("\n");
 }
 
@@ -160,7 +173,7 @@ Day *load_day(const char *name)
  * @param task_name The daily task name
  * @param silent Do not verbose if `true`
  */
-void add_task(char *name, char *task_name, int silent)
+void add_task(char *name, char *task_name)
 {
     Day *day = load_day(name);
     size_t i = day->task_size++;
@@ -186,9 +199,6 @@ void add_task(char *name, char *task_name, int silent)
     strcpy(day->task_list[i]->name, task_name);
     day->task_list[i]->ended = 0;
 
-    if (!silent)
-        prettyprint(day);
-
     save_day(day);
     free(day);
 }
@@ -198,9 +208,8 @@ void add_task(char *name, char *task_name, int silent)
  *
  * @param name The day name
  * @param task_name The daily task name
- * @param silent Do not verbose if `true`
  */
-void remove_task(char *name, char *task_name, int silent)
+void remove_task(char *name, char *task_name)
 {
     Day *day = load_day(name);
     size_t index;
@@ -219,8 +228,6 @@ void remove_task(char *name, char *task_name, int silent)
         day->task_size--;
         free(day->task_list[index]);
         day->task_list = (Task **)realloc(day->task_list, sizeof(Task) * day->task_size);
-        if (!silent)
-            prettyprint(day);
         save_day(day);
         free(day);
         return;
@@ -234,8 +241,6 @@ void remove_task(char *name, char *task_name, int silent)
     day->task_size--;
     free(day->task_list[day->task_size]);
     day->task_list = (Task **)realloc(day->task_list, sizeof(Task) * day->task_size);
-    if (!silent)
-        prettyprint(day);
     save_day(day);
     free(day);
 }
@@ -246,9 +251,8 @@ void remove_task(char *name, char *task_name, int silent)
  * @param name The day name
  * @param task_name The daily task name
  * @param eu End [1] or Undo [0]
- * @param silent Do not verbose if `true`
  */
-void set_task_ended(char *name, char *task_name, int eu, int silent)
+void set_task_ended(char *name, char *task_name, int eu)
 {
     Day *day = load_day(name);
     for (size_t i = 0; i < day->task_size; i++)
@@ -256,12 +260,18 @@ void set_task_ended(char *name, char *task_name, int eu, int silent)
         if (strcmp(task_name, day->task_list[i]->name) == 0)
         {
             day->task_list[i]->ended = eu;
-            if (!silent)
-                prettyprint(day);
             save_day(day);
             free(day);
             return;
         }
     }
     printf("\n`%s` task \"%s\" not found\n", name, task_name);
+}
+
+
+void verbose_day(char* day_name)
+{
+    Day* day = load_day(day_name);
+    prettyprint(day);
+    free(day);
 }
