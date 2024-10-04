@@ -169,6 +169,15 @@ void add_task(char *name, char *task_name, int verbose)
         day->task_list = (Task **)malloc(sizeof(Task));
     else
     {
+        for(size_t i=0; i<day->task_size; i++)
+        {
+            if(strcmp(day->task_list[i]->name, task_name) == 0)
+            {
+                printf("\n`%s` task \"%s\" already exists\n", day->name, task_name);
+                free(day);
+                return;
+            }
+        }
         day->task_list = (Task **)realloc(day->task_list, sizeof(Task) * (day->task_size));
     }
 
@@ -205,5 +214,5 @@ void end_task(char* name, char* task_name, int verbose)
             return;
         }
     }
-    printf("\nTask `%s` not found inside `%s`\n", task_name, name);
+    printf("\n`%s` task \"%s\" not found\n", name, task_name);
 }
