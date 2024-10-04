@@ -119,7 +119,7 @@ void save_day(Day *day)
     FILE *fd = fopen(day->name, "wb");
     if (!fd)
     {
-        printf("[ERR] couldn't open day file");
+        printf("[ERR] couldn't open day file [%s]", day->name);
         return;
     }
 
@@ -154,7 +154,11 @@ Day *load_day(const char *name)
 }
 
 /**
- *
+ * Adds a task to the day task list.
+ * 
+ * @param name The day name
+ * @param task_name The daily task name
+ * @param verbose Show the current day data if `true`
  */
 void add_task(char *name, char *task_name, int verbose)
 {
@@ -178,4 +182,28 @@ void add_task(char *name, char *task_name, int verbose)
 
     save_day(day);
     free(day);
+}
+
+/**
+ * Loads a day and mark the given task (if exists) as ended
+ * 
+ * @param name The day name
+ * @param task_name The daily task name
+ * @param verbose Show the current day data if `true`
+ */
+void end_task(char* name, char* task_name, int verbose)
+{
+    Day* day = load_day(name);
+    for(size_t i=0; i<day->task_size; i++)
+    {
+        if(strcmp(task_name, day->task_list[i]->name) == 0)
+        {
+            day->task_list[i]->ended = 1;
+            prettyprint(day);
+            save_day(day);
+            free(day);
+            return;
+        }
+    }
+    printf("\nTask `%s` not found inside `%s`\n", task_name, name);
 }
