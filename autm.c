@@ -3,10 +3,18 @@
 
 #include <time.h>
 
-#define AUTM_VERSION "1.1.1"
+#define AUTM_VERSION "1.1.2"
 
 static char **days = NULL;
 static size_t day_count = 0;
+
+char *add_aux = NULL;
+char *remove_aux = NULL;
+char *end_aux = NULL;
+char *undo_aux = NULL;
+size_t rm_index_aux = 0;
+size_t end_index_aux = 0;
+size_t undo_index_aux = 0;
 
 void push_day(const char *day_name);
 void manage_tasks(char *day, char *add, char *remove, char *end, char *undo);
@@ -14,11 +22,6 @@ void manage_tasks(char *day, char *add, char *remove, char *end, char *undo);
 int main(int argc, char **argv)
 {
     int c;
-
-    char *add_aux = NULL;
-    char *remove_aux = NULL;
-    char *end_aux = NULL;
-    char *undo_aux = NULL;
 
     while (1)
     {
@@ -38,8 +41,12 @@ int main(int argc, char **argv)
             break;
 
         case 'r':
-            remove_aux = malloc(sizeof(optarg));
-            strcpy(remove_aux, optarg);
+            rm_index_aux = strtoul(optarg, NULL, 10);
+            if (rm_index_aux == 0)
+            {
+                remove_aux = malloc(sizeof(optarg));
+                strcpy(remove_aux, optarg);
+            }
             break;
 
         case 'e':
@@ -98,7 +105,7 @@ void push_day(const char *day_name)
     if (!days)
         days = (char **)malloc(sizeof(day_name));
     else
-        days = (char **)realloc(days, sizeof(days) + sizeof(day_name));
+        days = (char **)realloc(days, sizeof(days) + sizeof(day_name)); // HERE
     days[day_count] = malloc(sizeof(day_name));
     strcpy(days[day_count++], day_name);
 }
@@ -108,7 +115,9 @@ void manage_tasks(char *day, char *add, char *remove, char *end, char *undo)
     if (add)
         add_task(day, add);
     if (remove)
-        remove_task(day, remove);
+        remove_task_c(day, remove);
+    if (rm_index_aux > 0)
+        remove_task_i(day, rm_index_aux - 1);
     if (end)
         set_task_ended(day, end, 1);
     if (undo)

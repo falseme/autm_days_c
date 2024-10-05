@@ -6,13 +6,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define COLOR_RED     "\x1b[31m"
-#define COLOR_GREEN   "\x1b[32m"
-#define COLOR_YELLOW  "\x1b[33m"
-#define COLOR_BLUE    "\x1b[34m"
+#define COLOR_RED "\x1b[31m"
+#define COLOR_GREEN "\x1b[32m"
+#define COLOR_YELLOW "\x1b[33m"
+#define COLOR_BLUE "\x1b[34m"
 #define COLOR_MAGENTA "\x1b[35m"
-#define COLOR_CYAN    "\x1b[36m"
-#define COLOR_RESET   "\x1b[0m"
+#define COLOR_CYAN "\x1b[36m"
+#define COLOR_RESET "\x1b[0m"
 
 /**
  * Daily Task data
@@ -43,7 +43,7 @@ typedef struct day_t
  * 1. Day name byte size [size_t]
  * 2. Day name [(1.) * char]
  * 3. Day task list length [size_t]
- * 4. Day Tasks:
+ * 4. Day Task List:
  * 4.1. Task name byte size [size_t]
  * 4.2. Task name [(4.1.) * char]
  * 4.3. Task ended condition [int]
@@ -76,7 +76,7 @@ void serialize_day(FILE *fd, Day *day)
  * 1. Day name byte size [size_t]
  * 2. Day name [(1.) * char]
  * 3. Day task list length [size_t]
- * 4. Day Tasks:
+ * 4. Day Task List:
  * 4.1. Task name byte size [size_t]
  * 4.2. Task name [(4.1.) * char]
  * 4.3. Task ended condition [int]
@@ -112,7 +112,7 @@ void deserialize_day(FILE *fd, Day *day)
  * @param day The day data
  * @param fday The day file name
  */
-void save_day(Day *day, const char* fday)
+void save_day(Day *day, const char *fday)
 {
     FILE *fd = fopen(fday, "wb");
     if (!fd)
@@ -151,7 +151,12 @@ Day *load_day(const char *name)
     return day;
 }
 
-void load_today(const char* wday)
+/**
+ * Loads the current day file.
+ *
+ * @param wday The current day of the week.
+ */
+void load_today(const char *wday)
 {
     Day *today = load_day("today");
     if (strcmp(today->name, wday) != 0)
@@ -202,34 +207,64 @@ void add_task(char *name, char *task_name)
 }
 
 /**
- * Removes a task from the task list
+ * Removes a task from the given day.
+ *
+ * @param day The day data struct
+ * @param index The task index
+ * @param task_name The task name
+ * @return 1 if could remove it, 0 otherwise
+ */
+int remove_task(Day *day, size_t index, const char *task_name)
+{
+    // ERR
+    if (index >= day->task_size)
+    {
+        printf(COLOR_MAGENTA "\n[%s]" COLOR_RED " task \"%s\" not found" COLOR_RESET, day->name, task_name);
+        return 0;
+    }
+    // MOVE TO THE LEFT
+    for (size_t i = index + 1; i < day->task_size; i++)
+    {
+        day->task_list[i - 1]->name = day->task_list[i]->name;
+        day->task_list[i - 1]->ended = day->task_list[i]->ended;
+    }
+    // RESIZE
+    day->task_size--;
+    free(day->task_list[day->task_size]);
+    day->task_list = (Task **)realloc(day->task_list, sizeof(Task) * day->task_size);
+    return 1;
+}
+
+/**
+ * Loads the day file, search for the given task and removes it.
  *
  * @param name The day name
  * @param task_name The daily task name
  */
-void remove_task(char *name, char *task_name)
+void remove_task_c(char *name, const char *task_name)
 {
     Day *day = load_day(name);
     size_t index;
     for (index = 0; index < day->task_size; index++)
         if (strcmp(task_name, day->task_list[index]->name) == 0)
             break;
-    if (index >= day->task_size)
-    {
-        printf(COLOR_MAGENTA "\n[%s]" COLOR_RED " task \"%s\" not found" COLOR_RESET, name, task_name);
-        free(day);
-        return;
-    }
-    for (size_t i = index + 1; i < day->task_size; i++)
-    {
-        day->task_list[i - 1]->name = day->task_list[i]->name;
-        day->task_list[i - 1]->ended = day->task_list[i]->ended;
-    }
-    day->task_size--;
-    free(day->task_list[day->task_size]);
-    day->task_list = (Task **)realloc(day->task_list, sizeof(Task) * day->task_size);
-    
-    save_day(day, name);
+
+    if (remove_task(day, index, task_name))
+        save_day(day, name);
+    free(day);
+}
+
+/**
+ * Loads the day file and removes the task in the given index.
+ *
+ * @param name The day name
+ * @param index The task index
+ */
+void remove_task_i(char *name, size_t index)
+{
+    Day *day = load_day(name);
+    if (remove_task(day, index, "index -r"))
+        save_day(day, name);
     free(day);
 }
 
@@ -273,9 +308,12 @@ void prettyprint(Day *day)
     printf("\n");
 }
 
-void verbose_day(char* day_name)
+/**
+ * Loads the day and prettyprints it.
+ */
+void verbose_day(char *day_name)
 {
-    Day* day = load_day(day_name);
+    Day *day = load_day(day_name);
     prettyprint(day);
     free(day);
 }
