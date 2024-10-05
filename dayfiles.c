@@ -218,10 +218,7 @@ int remove_task(Day *day, size_t index, const char *task_name)
 {
     // ERR
     if (index >= day->task_size)
-    {
-        printf(COLOR_MAGENTA "\n[%s]" COLOR_RED " task \"%s\" not found" COLOR_RESET, day->name, task_name);
         return 0;
-    }
     // MOVE TO THE LEFT
     for (size_t i = index + 1; i < day->task_size; i++)
     {
@@ -251,6 +248,8 @@ void remove_task_c(char *name, const char *task_name)
 
     if (remove_task(day, index, task_name))
         save_day(day, name);
+    else
+        printf(COLOR_MAGENTA "\n[%s]" COLOR_RED " task \"%s\" not found" COLOR_RESET, name, task_name);
     free(day);
 }
 
@@ -265,6 +264,8 @@ void remove_task_i(char *name, size_t index)
     Day *day = load_day(name);
     if (remove_task(day, index, "index -r"))
         save_day(day, name);
+    else
+        printf(COLOR_MAGENTA "\n[%s]" COLOR_RED " task index \"%ld\" not found" COLOR_RESET, name, index);
     free(day);
 }
 
@@ -289,6 +290,20 @@ void set_task_ended(char *name, char *task_name, int eu)
         }
     }
     printf(COLOR_MAGENTA "\n[%s]" COLOR_RED " task \"%s\" not found" COLOR_RESET, name, task_name);
+    free(day);
+}
+
+void set_task_ended_i(char *name, size_t index, int eu)
+{
+    Day *day = load_day(name);
+    if (index >= day->task_size)
+    {
+        printf(COLOR_MAGENTA "\n[%s]" COLOR_RED " task index \"%ld\" not found" COLOR_RESET, name, index);
+        free(day);
+        return;
+    }
+    day->task_list[index]->ended = eu;
+    save_day(day, name);
     free(day);
 }
 

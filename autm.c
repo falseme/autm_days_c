@@ -36,12 +36,12 @@ int main(int argc, char **argv)
         {
         /* OPTIONS */
         case 'a':
-            if(strtoul(optarg, NULL, 10) > 0 || strcmp(optarg, "0") == 0)
+            if (strtoul(optarg, NULL, 10) > 0 || strcmp(optarg, "0") == 0)
             {
-                printf("Can't add a task with a number as a name\n");
+                printf("Can't add a task with a name number\n");
                 break;
             }
-            add_aux = malloc(sizeof(optarg));
+            add_aux = malloc(sizeof(char) * (strlen(optarg) * 1));
             strcpy(add_aux, optarg);
             break;
 
@@ -49,18 +49,26 @@ int main(int argc, char **argv)
             rm_index_aux = strtoul(optarg, NULL, 10);
             if (rm_index_aux == 0)
             {
-                remove_aux = malloc(sizeof(optarg));
+                remove_aux = malloc(sizeof(char) * (strlen(optarg) * 1));
                 strcpy(remove_aux, optarg);
             }
             break;
 
         case 'e':
-            end_aux = malloc(sizeof(optarg));
-            strcpy(end_aux, optarg);
+            end_index_aux = strtoul(optarg, NULL, 10);
+            if (end_index_aux == 0)
+            {
+                end_aux = malloc(sizeof(char) * (strlen(optarg) * 1));
+                strcpy(end_aux, optarg);
+            }
             break;
         case 'u':
-            undo_aux = malloc(sizeof(optarg));
-            strcpy(undo_aux, optarg);
+            undo_index_aux = strtoul(optarg, NULL, 10);
+            if (undo_index_aux == 0)
+            {
+                undo_aux = malloc(sizeof(char) * (strlen(optarg) * 1));
+                strcpy(undo_aux, optarg);
+            }
             break;
 
         /* FLAGS */
@@ -125,8 +133,12 @@ void manage_tasks(char *day, char *add, char *remove, char *end, char *undo)
         remove_task_i(day, rm_index_aux - 1);
     if (end)
         set_task_ended(day, end, 1);
+    if (end_index_aux > 0)
+        set_task_ended_i(day, end_index_aux - 1, 1);
     if (undo)
         set_task_ended(day, undo, 0);
+    if (undo_index_aux > 0)
+        set_task_ended_i(day, undo_index_aux - 1, 0);
     if (!silent_flag)
         verbose_day(day);
 }
