@@ -110,10 +110,11 @@ void deserialize_day(FILE *fd, Day *day)
  * Saves the given day data into a file with the same name.
  *
  * @param day The day data
+ * @param fday The day file name
  */
-void save_day(Day *day)
+void save_day(Day *day, const char* fday)
 {
-    FILE *fd = fopen(day->name, "wb");
+    FILE *fd = fopen(fday, "wb");
     if (!fd)
     {
         printf("[ERR] couldn't open day file [%s]", day->name);
@@ -150,6 +151,19 @@ Day *load_day(const char *name)
     return day;
 }
 
+void load_today(const char* wday)
+{
+    Day *today = load_day("today");
+    if (strcmp(today->name, wday) != 0)
+    {
+        free(today);
+        today = load_day(wday);
+        save_day(today, "today");
+    }
+    printf(COLOR_BLUE "\nTODAY: " COLOR_MAGENTA "[%s]", today->name);
+    free(today);
+}
+
 /**
  * Adds a task to the day task list.
  *
@@ -183,7 +197,7 @@ void add_task(char *name, char *task_name)
     strcpy(day->task_list[i]->name, task_name);
     day->task_list[i]->ended = 0;
 
-    save_day(day);
+    save_day(day, name);
     free(day);
 }
 
@@ -214,7 +228,8 @@ void remove_task(char *name, char *task_name)
     day->task_size--;
     free(day->task_list[day->task_size]);
     day->task_list = (Task **)realloc(day->task_list, sizeof(Task) * day->task_size);
-    save_day(day);
+    
+    save_day(day, name);
     free(day);
 }
 
@@ -233,12 +248,13 @@ void set_task_ended(char *name, char *task_name, int eu)
         if (strcmp(task_name, day->task_list[i]->name) == 0)
         {
             day->task_list[i]->ended = eu;
-            save_day(day);
+            save_day(day, name);
             free(day);
             return;
         }
     }
     printf(COLOR_MAGENTA "\n[%s]" COLOR_RED " task \"%s\" not found" COLOR_RESET, name, task_name);
+    free(day);
 }
 
 /**

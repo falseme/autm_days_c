@@ -1,6 +1,12 @@
 # Day Files
-*.autm
-*.autmd
+mon
+tue
+wed
+thu
+fri
+sat
+sun
+today
 
 # Output Files
 *.o

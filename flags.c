@@ -10,14 +10,13 @@ static int day_flag;
 
 static struct option long_options[] = {
     /* FLAGS */
-    {"mon", no_argument, &day_flag, 1},
-    {"tue", no_argument, &day_flag, 2},
-    {"wed", no_argument, &day_flag, 3},
-    {"thu", no_argument, &day_flag, 4},
-    {"fri", no_argument, &day_flag, 5},
-    {"sat", no_argument, &day_flag, 6},
-    {"sun", no_argument, &day_flag, 7},
-    {"today", no_argument, &day_flag, 8},
+    {"sun", no_argument, &day_flag, 1},
+    {"mon", no_argument, &day_flag, 2},
+    {"tue", no_argument, &day_flag, 3},
+    {"wed", no_argument, &day_flag, 4},
+    {"thu", no_argument, &day_flag, 5},
+    {"fri", no_argument, &day_flag, 6},
+    {"sat", no_argument, &day_flag, 7},
     {"help", no_argument, &help_flag, 9},
     {"silent", no_argument, &silent_flag, 10},
 

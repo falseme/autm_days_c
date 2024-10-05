@@ -1,10 +1,13 @@
 #include "dayfiles.c"
 #include "flags.c"
 
+#include <time.h>
+
 static char **days = NULL;
 static size_t day_count = 0;
 
-void push_day(const char* day_name);
+void push_day(const char *day_name);
+void manage_tasks(char* day, char* add, char* remove, char* end, char* undo);
 
 int main(int argc, char **argv)
 {
@@ -59,18 +62,14 @@ int main(int argc, char **argv)
 
     if (day_flag)
         for (int i = 0; i < day_count; i++)
-        {
-            if (add_aux)
-                add_task(days[i], add_aux);
-            if (remove_aux)
-                remove_task(days[i], remove_aux);
-            if (end_aux)
-                set_task_ended(days[i], end_aux, 1);
-            if(undo_aux)
-                set_task_ended(days[i], undo_aux, 0);
-            if(!silent_flag)
-                verbose_day(days[i]);
-        }
+            manage_tasks(days[i], add_aux, remove_aux, end_aux, undo_aux);
+    else
+    {
+        time_t t = time(NULL);
+        int tm_wday = localtime(&t)->tm_wday;
+        load_today(get_day_name(tm_wday));
+        manage_tasks("today", add_aux, remove_aux, end_aux, undo_aux);
+    }
 
     if (help_flag)
     {
@@ -94,4 +93,18 @@ void push_day(const char *day_name)
         days = (char **)realloc(days, sizeof(days) + sizeof(day_name));
     days[day_count] = malloc(sizeof(day_name));
     strcpy(days[day_count++], day_name);
+}
+
+void manage_tasks(char* day, char* add, char* remove, char* end, char* undo)
+{
+    if (add)
+        add_task(day, add);
+    if (remove)
+        remove_task(day, remove);
+    if (end)
+        set_task_ended(day, end, 1);
+    if (undo)
+        set_task_ended(day, undo, 0);
+    if (!silent_flag)
+        verbose_day(day);
 }
