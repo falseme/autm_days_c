@@ -4,7 +4,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+
+#include "util.c"
 
 #define COLOR_RED "\x1b[31m"
 #define COLOR_GREEN "\x1b[32m"
@@ -198,8 +199,7 @@ void add_task(char *name, char *task_name)
     }
 
     day->task_list[i] = (Task *)malloc(sizeof(Task));
-    day->task_list[i]->name = (char *)malloc(sizeof(task_name));
-    strcpy(day->task_list[i]->name, task_name);
+    day->task_list[i]->name = strcopy(task_name);
     day->task_list[i]->ended = 0;
 
     save_day(day, name);
