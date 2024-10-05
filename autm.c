@@ -36,6 +36,11 @@ int main(int argc, char **argv)
         {
         /* OPTIONS */
         case 'a':
+            if(strtoul(optarg, NULL, 10) > 0 || strcmp(optarg, "0") == 0)
+            {
+                printf("Can't add a task with a number as a name\n");
+                break;
+            }
             add_aux = malloc(sizeof(optarg));
             strcpy(add_aux, optarg);
             break;
