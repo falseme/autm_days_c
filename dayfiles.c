@@ -50,7 +50,7 @@ typedef struct day_t
  */
 void serialize_day(FILE *fd, Day *day)
 {
-    size_t day_name_size = sizeof(day->name);
+    size_t day_name_size = (strlen(day->name) + 1) * sizeof(char);
     fwrite(&day_name_size, sizeof(size_t), 1, fd);  // 1.
     fwrite(day->name, day_name_size, 1, fd);        // 2.
     fwrite(&day->task_size, sizeof(size_t), 1, fd); // 3.
@@ -58,7 +58,7 @@ void serialize_day(FILE *fd, Day *day)
     // 4.
     for (size_t i = 0; i < day->task_size; i++)
     {
-        size_t task_name_size = sizeof(day->task_list[i]->name);
+        size_t task_name_size = (strlen(day->task_list[i]->name) + 1) * sizeof(char);
         fwrite(&task_name_size, sizeof(size_t), 1, fd);         // 4.1.
         fwrite(day->task_list[i]->name, task_name_size, 1, fd); // 4.2.
         fwrite(&day->task_list[i]->ended, sizeof(int), 1, fd);  // 4.3.
@@ -193,7 +193,7 @@ void add_task(char *name, char *task_name)
     }
 
     day->task_list[i] = (Task *)malloc(sizeof(Task));
-    day->task_list[i]->name = malloc(sizeof(task_name));
+    day->task_list[i]->name = (char *)malloc(sizeof(task_name));
     strcpy(day->task_list[i]->name, task_name);
     day->task_list[i]->ended = 0;
 

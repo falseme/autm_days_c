@@ -4,9 +4,10 @@
 
 #include <getopt.h>
 
-static int silent_flag;
+static int version_flag;
 static int help_flag;
 static int day_flag;
+static int silent_flag;
 
 static struct option long_options[] = {
     /* FLAGS */
@@ -19,6 +20,7 @@ static struct option long_options[] = {
     {"sat", no_argument, &day_flag, 7},
     {"help", no_argument, &help_flag, 9},
     {"silent", no_argument, &silent_flag, 10},
+    {"version", no_argument, &version_flag, 11},
 
     /* OPTIONS */
     {"add", required_argument, 0, 'a'},

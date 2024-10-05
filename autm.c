@@ -3,11 +3,13 @@
 
 #include <time.h>
 
+#define AUTM_VERSION "1.1.1"
+
 static char **days = NULL;
 static size_t day_count = 0;
 
 void push_day(const char *day_name);
-void manage_tasks(char* day, char* add, char* remove, char* end, char* undo);
+void manage_tasks(char *day, char *add, char *remove, char *end, char *undo);
 
 int main(int argc, char **argv)
 {
@@ -51,13 +53,18 @@ int main(int argc, char **argv)
 
         /* FLAGS */
         case 0:
-            if (option_index < 8)
+            if (option_index < 7)
                 push_day(get_day_name(option_index));
             break;
         default:
             printf("unknown option: [%c]", c);
             abort();
         }
+    }
+
+    if (version_flag)
+    {
+        printf("Autumn Days C\nautm - %s\n", AUTM_VERSION);
     }
 
     if (day_flag)
@@ -85,6 +92,7 @@ int main(int argc, char **argv)
     exit(0);
 }
 
+// TODO: rewrite mallocs
 void push_day(const char *day_name)
 {
     if (!days)
@@ -95,7 +103,7 @@ void push_day(const char *day_name)
     strcpy(days[day_count++], day_name);
 }
 
-void manage_tasks(char* day, char* add, char* remove, char* end, char* undo)
+void manage_tasks(char *day, char *add, char *remove, char *end, char *undo)
 {
     if (add)
         add_task(day, add);
