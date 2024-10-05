@@ -265,7 +265,7 @@ void remove_task_i(char *name, size_t index)
     if (remove_task(day, index, "index -r"))
         save_day(day, name);
     else
-        printf(COLOR_MAGENTA "\n[%s]" COLOR_RED " task index \"%ld\" not found" COLOR_RESET, name, index);
+        printf(COLOR_MAGENTA "\n[%s]" COLOR_RED " task index \"%ld\" not found" COLOR_RESET, name, index + 1);
     free(day);
 }
 
@@ -298,7 +298,7 @@ void set_task_ended_i(char *name, size_t index, int eu)
     Day *day = load_day(name);
     if (index >= day->task_size)
     {
-        printf(COLOR_MAGENTA "\n[%s]" COLOR_RED " task index \"%ld\" not found" COLOR_RESET, name, index);
+        printf(COLOR_MAGENTA "\n[%s]" COLOR_RED " task index \"%ld\" not found" COLOR_RESET, name, index + 1);
         free(day);
         return;
     }
@@ -316,9 +316,9 @@ void prettyprint(Day *day)
     for (size_t i = 0; i < day->task_size; i++)
     {
         if (day->task_list[i]->ended)
-            printf("\n " COLOR_GREEN "[%c]" COLOR_RESET " %s", 'X', day->task_list[i]->name);
+            printf("\n %ld." COLOR_GREEN "[%c]" COLOR_RESET " %s", i + 1, 'X', day->task_list[i]->name);
         else
-            printf("\n " COLOR_RED "[%c]" COLOR_RESET " %s", '_', day->task_list[i]->name);
+            printf("\n %ld." COLOR_RED "[%c]" COLOR_RESET " %s", i + 1, '_', day->task_list[i]->name);
     }
     printf("\n");
 }

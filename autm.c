@@ -127,10 +127,6 @@ void manage_tasks(char *day, char *add, char *remove, char *end, char *undo)
 {
     if (add)
         add_task(day, add);
-    if (remove)
-        remove_task_c(day, remove);
-    if (rm_index_aux > 0)
-        remove_task_i(day, rm_index_aux - 1);
     if (end)
         set_task_ended(day, end, 1);
     if (end_index_aux > 0)
@@ -139,6 +135,10 @@ void manage_tasks(char *day, char *add, char *remove, char *end, char *undo)
         set_task_ended(day, undo, 0);
     if (undo_index_aux > 0)
         set_task_ended_i(day, undo_index_aux - 1, 0);
+    if (remove)
+        remove_task_c(day, remove);
+    if (rm_index_aux > 0)
+        remove_task_i(day, rm_index_aux - 1);
     if (!silent_flag)
         verbose_day(day);
 }
